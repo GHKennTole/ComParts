@@ -30,6 +30,7 @@
 {% endwith %}
 <script>
     function confirmarEliminacion(url) {
+        // Esta función ya no es necesaria; se conserva por compatibilidad si algún template la llama.
         Swal.fire({
             title: '¿Estás seguro?',
             text: "¡No podrás revertir esto!",
@@ -92,7 +93,7 @@
                         <tbody>
                             {% for producto in productos %}
                             <tr>
-                                <td>{{ producto.id }}</td>
+                                <td>{{ loop.index }}</td>
                                 <td>{{ producto.nombre }}</td>
                                 <td>{{ producto.precio }}</td>
                                 <td>{{ producto.descripcion }}</td>

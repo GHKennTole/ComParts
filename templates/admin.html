@@ -26,24 +26,6 @@ Toast.fire({
 </ul>
 {% endif %}
 {% endwith %}
-<script>
-function confirmarEliminacion(url) {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "¡No podrás revertir esto!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = url;
-        }
-    });
-}
-</script>
 <div class="container p-5 mt-3">
     <h2 class=" text-center alert alert-danger py-4">Sistema de Gestión de Productos</h2>
     <div class="row text-center">
@@ -53,11 +35,11 @@ function confirmarEliminacion(url) {
                     <div class="col-md-8">
                         <div class="card-body text-white">
                             <h5 class="card-title">Perfil del Usuario</h5>
-                            <a href="{{ url_for('listar')}}" class="btn btn-outline-success">Ver Detalles</a>
+                            <a href="{{ url_for('perfil_admin') }}" class="btn btn-outline-success">Ver Detalles</a>
                         </div>
                     </div>
                     <div class="col-md-4 align-content-center">
-                        <img src="{{ url_for('static', filename='img/user.png') }}" class="img-fluid rounded-start" alt="Agregar Usuario ...">
+                        <img src="{{ url_for('static', filename='user.png') }}" class="img-fluid rounded-start" alt="Agregar Usuario ...">
                     </div>
                 </div>
             </div>
@@ -73,7 +55,7 @@ function confirmarEliminacion(url) {
                     </div>
                     <div class="col-md-4 align-content-center">
                         <a href="{{ url_for('listar_productos_agregados') }}">
-                            <img src="{{ url_for('static', filename='img/agregarp.png') }}" class="img-fluid rounded-start" alt="..."></a>
+                            <img src="{{ url_for('static', filename='agregarp.png') }}" class="img-fluid rounded-start" alt="..."></a>
                     </div>
                 </div>
             </div>
@@ -88,7 +70,7 @@ function confirmarEliminacion(url) {
                         </div>
                     </div>
                     <div class="col-md-4 align-content-center">
-                        <img src="{{ url_for('static', filename='img/listarp.png') }}" class="img-fluid rounded-start" alt="...">
+                        <img src="{{ url_for('static', filename='listarp.png') }}" class="img-fluid rounded-start" alt="...">
                     </div>
                 </div>
             </div>

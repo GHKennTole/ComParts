@@ -30,6 +30,7 @@
 {% endwith %}
 <script>
     function confirmarEliminacion(url) {
+        // Conservada por compatibilidad, el handler global en baseadmin.html usa data-confirm.
         Swal.fire({
             title: '¿Estás seguro?',
             text: "¡No podrás revertir esto!",
@@ -97,8 +98,15 @@
                     <td>
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                             data-bs-target="#modalEditar{{ usuario.id }}">Editar</button>
-                        <a href="{{ url_for('eliminar_usuario', id=usuario.id) }}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Eliminar este usuario?')">Eliminar</a>
+
+                        <!-- Usar data-confirm para que el handler en baseadmin.html muestre SweetAlert -->
+                        <a href="{{ url_for('eliminar_usuario', id=usuario.id) }}"
+                           class="btn btn-danger btn-sm"
+                           data-confirm="¿Está seguro que desea eliminar este usuario?"
+                           data-confirm-ok="Sí, eliminar"
+                           data-confirm-cancel="Cancelar">
+                            Eliminar
+                        </a>
                     </td>
                 </tr>
                 <!-- Modal de Edición -->

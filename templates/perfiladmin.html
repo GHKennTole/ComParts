@@ -1,0 +1,46 @@
+{% extends 'baseadmin.html' %}
+
+{% block title %}Perfil del Administrador{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 p-4 rounded-4">
+        <h2 class="text-center mb-4 text-primary fw-bold">
+            <i class="bi bi-person-badge-fill me-2"></i> Perfil del Administrador
+        </h2>
+        <div class="row align-items-center">
+            <!-- Foto de perfil -->
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+                <img src="{{ url_for('static', filename='user.png') }}" class="img-thumbnail rounded-circle shadow-sm border border-3 border-primary" style="width: 200px;">
+                <p class="mt-3 text-muted">Foto de perfil predeterminada</p>
+            </div>
+
+            <!-- Información del perfil -->
+            <div class="col-md-8">
+                <ul class="list-group list-group-flush fs-5">
+                    <li class="list-group-item">
+                        <i class="bi bi-person-fill text-primary me-2"></i><strong>Nombre:</strong> {{ usuario.nombre }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-envelope-fill text-primary me-2"></i><strong>Correo:</strong> {{ usuario.email }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-shield-lock-fill text-primary me-2"></i><strong>Rol:</strong> 
+                        <span class="badge bg-danger">Administrador</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-hash text-primary me-2"></i><strong>ID de Usuario:</strong> {{ usuario.id }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-toggle-on text-primary me-2"></i><strong>Estado:</strong> 
+                        <span class="badge bg-success">Activo</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-gear-fill text-primary me-2"></i><strong>Permisos:</strong> Control total del sistema
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
