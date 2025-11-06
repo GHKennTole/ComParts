@@ -3,6 +3,34 @@
 {% block titulo %}Acerca de ComParts{% endblock titulo %}
 
 {% block body %}
+
+<style>
+    :root {
+      --azul-oscuro: #113155;
+      --azul: #1d4ed8;
+      --azul-claro: #3b82f6;
+      --celeste: #7cc2ff;
+      --azul-suave: #eef5ff;
+    }
+    body {
+      background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%);
+    }
+
+    .page-index {
+        min-height: 100vh;
+      }
+
+      .btn.btn-primary {
+        background-color: var(--azul);
+        border-color: var(--azul);
+      }
+      .btn.btn-primary:hover {
+        background-color: var(--azul-oscuro);
+        border-color: var(--azul-oscuro);
+      }
+      
+  </style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">

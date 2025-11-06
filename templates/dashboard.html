@@ -1,0 +1,209 @@
+{% extends 'baseadmin.html' %}
+{% block title %}Dashboard{% endblock title %}
+{% block body %}
+<style>
+  :root { --azul-oscuro:#113155; --azul:#1d4ed8; --azul-suave:#eef5ff; }
+  body{ background:linear-gradient(180deg,#cfe3ff 0%,#cfe3ff 65%,#cfe3ff 100%) !important; }
+  .section-bar{ background:linear-gradient(92deg,var(--azul-oscuro),var(--azul)); color:#fff; border-radius:14px; box-shadow:0 10px 22px rgba(17,49,85,.25); }
+  .stat-card{
+    position:relative;
+    border:0; border-radius:16px; background:#fff;
+    box-shadow:0 12px 24px rgba(17,49,85,.12);
+    padding:18px; overflow:hidden;
+    transition:.15s;
+  }
+  .stat-card:hover{ transform:translateY(-4px); box-shadow:0 18px 32px rgba(17,49,85,.16); }
+  .stat-card .icon{
+    width:52px; height:52px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#113155,#1d4ed8); color:#fff; font-size:1.45rem;
+    box-shadow:0 6px 18px rgba(17,49,85,.28);
+  }
+  .value{ font-size:1.9rem; font-weight:700; margin:4px 0 2px; letter-spacing:.5px; color:#113155; }
+  .mini-label{ font-size:.75rem; letter-spacing:1px; font-weight:600; opacity:.7; }
+  .chart-box, .panel-box{
+    border:0; border-radius:16px; background:#fff;
+    box-shadow:0 12px 24px rgba(17,49,85,.12);
+    padding:18px; height:100%;
+  }
+  table.dashboard-table td, table.dashboard-table th{ font-size:.85rem; }
+  .badge-soft{
+    background:#eef5ff; color:#113155; font-weight:600; border:1px solid rgba(17,49,85,.1);
+  }
+</style>
+
+<div class="container py-4">
+  <div class="p-4 text-center section-bar mb-4">
+    <h1 class="m-0">DASHBOARD GENERAL</h1>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-4 mb-2">
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon" data-bs-toggle="tooltip" title="Total de usuarios registrados en el sistema"><i class="bi bi-people"></i></div>
+          <div>
+            <div class="mini-label text-uppercase text-muted">Usuarios</div>
+            <div class="value" data-bs-toggle="tooltip" title="Usuarios totales en la base de datos">{{ total_usuarios }}</div>
+            <div class="text-success fw-semibold" style="font-size:.8rem;" data-bs-toggle="tooltip" title="Nuevos usuarios en las últimas 24 horas">+{{ usuarios_hoy }} hoy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon" data-bs-toggle="tooltip" title="Cantidad de productos disponibles"><i class="bi bi-box-seam"></i></div>
+          <div>
+            <div class="mini-label text-uppercase text-muted">Productos</div>
+            <div class="value" data-bs-toggle="tooltip" title="Productos totales disponibles">{{ total_productos }}</div>
+            <div class="text-primary fw-semibold" style="font-size:.8rem;" data-bs-toggle="tooltip" title="Productos añadidos hoy">+{{ productos_hoy }} hoy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon" data-bs-toggle="tooltip" title="Último inicio de sesión registrado para tu cuenta"><i class="bi bi-door-open"></i></div>
+          <div>
+            <div class="mini-label text-uppercase text-muted">Último login propio</div>
+            <div class="value" style="font-size:1.2rem;" data-bs-toggle="tooltip" title="Hora del último inicio de sesión">
+              {% if session.get('id') and ultimos_logins and ultimos_logins[0].last_login %}
+                {{ ultimos_logins[0].last_login.strftime('%d/%m %H:%M') if ultimos_logins[0].last_login is not string else ultimos_logins[0].last_login }}
+              {% else %}—{% endif %}
+            </div>
+            <div class="text-muted" style="font-size:.75rem;">Hora local</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon" data-bs-toggle="tooltip" title="Indicador rápido del estado del sistema"><i class="bi bi-activity"></i></div>
+          <div>
+            <div class="mini-label text-uppercase text-muted">Actividad</div>
+            <div class="value" style="font-size:1.2rem;" data-bs-toggle="tooltip" title="Estado de salud del sistema">OK</div>
+            <div class="text-muted" style="font-size:.75rem;">Sistema estable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts + Logins -->
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="chart-box">
+        <h6 class="text-muted text-uppercase mb-2">Distribución de productos</h6>
+        <canvas id="chartProductos" height="160" data-bs-toggle="tooltip" title="Gráfico de barras: distribución de productos por categoría/administrador"></canvas>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="panel-box">
+        <h6 class="text-muted text-uppercase mb-2">Últimos logins</h6>
+        <div class="table-responsive">
+          <table class="table table-sm dashboard-table mb-0 align-middle">
+            <thead>
+              <tr>
+                <th data-bs-toggle="tooltip" title="Nombre del usuario">Usuario</th>
+                <th data-bs-toggle="tooltip" title="Correo electrónico">Email</th>
+                <th data-bs-toggle="tooltip" title="Fecha y hora del último inicio de sesión">Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in ultimos_logins %}
+              <tr>
+                <td><span class="badge badge-soft" data-bs-toggle="tooltip" title="Ver detalles de {{ u.nombre }}">{{ u.nombre }}</span></td>
+                <td class="text-muted">{{ u.email }}</td>
+                <td>
+                  {% if u.last_login %}
+                    {% if u.last_login is string %}
+                      {{ u.last_login }}
+                    {% else %}
+                      {{ u.last_login.strftime('%d/%m/%Y %H:%M') }}
+                    {% endif %}
+                  {% else %}—{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              {% if not ultimos_logins %}
+              <tr><td colspan="3" class="text-muted">Sin actividad reciente.</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Extra panel (placeholders) -->
+    <div class="col-lg-12">
+      <div class="panel-box">
+        <h6 class="text-muted text-uppercase mb-3">Accesos rápidos</h6>
+        <div class="row g-3">
+          <div class="col-sm-3">
+            <a href="{{ url_for('perfil_admin') }}" class="btn btn-primary w-100" data-bs-toggle="tooltip" title="Ir a tu perfil de administrador">
+              <i class="bi bi-person-circle me-1"></i> Perfil
+            </a>
+          </div>
+          <div class="col-sm-3">
+            <a href="{{ url_for('listar_productos_agregados') }}" class="btn btn-primary w-100" data-bs-toggle="tooltip" title="Abrir formulario para agregar un producto">
+              <i class="bi bi-plus-circle me-1"></i> Agregar Producto
+            </a>
+          </div>
+          <div class="col-sm-3">
+            <a href="{{ url_for('listar_productos') }}" class="btn btn-primary w-100" data-bs-toggle="tooltip" title="Ver el listado completo de productos">
+              <i class="bi bi-boxes me-1"></i> Ver Productos
+            </a>
+          </div>
+          <div class="col-sm-3">
+            <a href="{{ url_for('listar') }}" class="btn btn-primary w-100" data-bs-toggle="tooltip" title="Administrar usuarios">
+              <i class="bi bi-people-fill me-1"></i> Usuarios
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const ctx = document.getElementById('chartProductos');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ labels_dist|tojson }},
+        datasets: [{
+          label: 'Productos',
+          data: {{ data_dist|tojson }},
+          borderRadius: 6,
+          backgroundColor: ['#113155','#1d4ed8','#3b82f6','#7cc2ff','#4e7bd8'],
+        }]
+      },
+      options: {
+        plugins:{ legend:{ display:false } },
+        scales:{
+          x:{ ticks:{ color:'#113155' } },
+          y:{ beginAtZero:true, ticks:{ precision:0, color:'#113155' } }
+        }
+      }
+    });
+  }
+
+  // Inicializar tooltips de Bootstrap
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function (el) {
+    try { new bootstrap.Tooltip(el); } catch (e) { /* Ignorar si no existe bootstrap */ }
+  });
+});
+</script>
+{% endblock %}

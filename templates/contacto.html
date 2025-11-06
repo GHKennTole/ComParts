@@ -3,6 +3,30 @@
 {% block titulo %}Contacto{% endblock titulo %}
 
 {% block body %}
+
+<style>
+    :root {
+      --azul-oscuro: #113155;
+      --azul: #1d4ed8;
+      --azul-claro: #3b82f6;
+      --celeste: #7cc2ff;
+      --azul-suave: #eef5ff;
+    }
+    body {
+      background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%);
+    }
+
+    .btn.btn-primary {
+        background-color: var(--azul);
+        border-color: var(--azul);
+      }
+      .btn.btn-primary:hover {
+        background-color: var(--azul-oscuro);
+        border-color: var(--azul-oscuro);
+      }    
+
+  </style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-7">
@@ -10,8 +34,8 @@
                 <div class="card-body">
                     <div class="text-center mb-4">
                         <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo ComParts" width="60" class="mb-2">
-                        <h2 class="fw-bold text-primary">Formulario de Contacto</h2>
-                        <p class="text-muted">¿Tienes dudas o comentarios? ¡Escríbenos!</p>
+                        <h2 class="fw-bold text-primary">¿Tienes dudas o comentarios? ¡Escríbenos!</h2>
+                        <p class="text-muted">En ComParts nos distingue la atención personalizada; escríbenos y te responderemos a la brevedad.</p>
                     </div>
                     {% if user %}
                         <div class="alert alert-success">

@@ -3,68 +3,74 @@
 {% block titulo %} Registrarse {% endblock titulo %}
 
 {% block body %}
-<div class="d-flex justify-content-center align-items-center vh-100" style="background-color: #d5eadc;">
-    <div class="p-4 w-100" style="max-width: 1100px;">
-        <div class="rounded-5 overflow-hidden p-0 shadow-lg" style="background-color: #a0d8b3;">
-            <div class="row g-0">
+<style>
+  :root {
+    --azul-oscuro: #113155;
+    --azul: #1d4ed8;
+  }
+  /* Fondo como el index */
+  body { background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%); }
+  /* Asegura azul en primarios (override del morado global) */
+  .btn.btn-primary { background-color: var(--azul) !important; border-color: var(--azul) !important; }
+  .btn.btn-primary:hover { background-color: var(--azul-oscuro) !important; border-color: var(--azul-oscuro) !important; }
+</style>
 
-                <!-- Columna izquierda (Logo y bienvenida) -->
-                <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-white p-5"
-                    style="background-color: #0b5ed7; display:flex; align-items:center; justify-content:center;">
-                    <img src="{{ url_for('static', filename='logo.png') }}" class="img-fluid mb-4"
-                        style="max-width: 40%; height: auto; object-fit: contain;">
-                    <h2 class="text-center">¡Bienvenido!</h2>
-                    <p class="text-center mb-4" style="font-family: 'Lucida Console', monospace;">
-                        Ingresa tu información para registrarte
-                    </p>
-                    <a href="{{ url_for('login') }}">
-                        <button type="button" class="btn btn-success">Iniciar Sesión</button>
-                    </a>
-                </div>
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: transparent;">
+  <div class="p-4 w-100" style="max-width: 1100px;">
+    <div class="rounded-5 overflow-hidden p-0 shadow-lg" style="background-color: #f7fbff;">
+      <div class="row g-0">
 
-                <!-- Columna derecha (Formulario) -->
-                <div class="col-md-6 d-flex flex-column justify-content-center align-items-center p-5"
-                    style="background-color: #a0d8b3; height: 100%; display:flex; align-items:center; justify-content:center;">
-                    <h2 class="mb-4">Crear cuenta</h2>
-
-                    <!-- Botón Google -->
-                    <button type="button"
-                        class="btn btn-light w-100 d-flex align-items-center justify-content-center mb-3"
-                        style="max-width: 400px; height: 45px;">
-                        <img src="{{ url_for('static', filename='logoGoogle.png') }}" alt="Google Logo"
-                            style="width: 20px; margin-right: 10px;">
-                        Iniciar con Google
-                    </button>
-
-                    <p class="text-center mb-3">o usa tu email para registrarte</p>
-
-                    <!-- Formulario -->
-                    <form method="post" action="{{ url_for('crearusuario') }}" class="w-100" style="max-width: 400px;">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" name="nombre" 
-                                   placeholder="Nombre completo" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" name="email" 
-                                   placeholder="Correo electrónico" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" name="password" 
-                                   placeholder="Contraseña" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" name="confirm_password" 
-                                   placeholder="Confirmar contraseña" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100" style="height: 45px;">
-                            Registrarse
-                        </button>
-                    </form>
-                </div>
-
-            </div>
+        <!-- Columna izquierda (Logo y bienvenida) -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-white p-5"
+             style="background: linear-gradient(92deg,#113155,#1d4ed8);">
+          <img src="{{ url_for('static', filename='logo.png') }}" class="img-fluid mb-4"
+               style="max-width: 40%; height: auto; object-fit: contain;">
+          <h2 class="text-center">¡Bienvenido!</h2>
+          <p class="text-center mb-4" style="font-family: 'Lucida Console', monospace;">
+            Ingresa tu información para registrarte
+          </p>
+          <a href="{{ url_for('login') }}">
+            <button type="button" class="btn btn-outline-light">Iniciar Sesión</button>
+          </a>
         </div>
+
+        <!-- Columna derecha (Formulario) -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center p-5"
+             style="background-color:#f7fbff; height: 100%;">
+          <h2 class="mb-4">Crear cuenta</h2>
+
+          <!-- Botón Google -->
+          <button type="button"
+                  class="btn btn-light w-100 d-flex align-items-center justify-content-center mb-3"
+                  style="max-width: 400px; height: 45px;">
+            <img src="{{ url_for('static', filename='logoGoogle.png') }}" alt="Google Logo"
+                 style="width: 20px; margin-right: 10px;">
+            Iniciar con Google
+          </button>
+
+          <p class="text-center mb-3">o usa tu email para registrarte</p>
+
+          <!-- Formulario -->
+          <form method="post" action="{{ url_for('crearusuario') }}" class="w-100" style="max-width: 400px;">
+            <div class="mb-3">
+              <input type="text" class="form-control" name="nombre" placeholder="Nombre completo" required>
+            </div>
+            <div class="mb-3">
+              <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
+            </div>
+            <div class="mb-3">
+              <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
+            </div>
+            <div class="mb-3">
+              <input type="password" class="form-control" name="confirm_password" placeholder="Confirmar contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" style="height: 45px;">Registrarse</button>
+          </form>
+        </div>
+
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal de éxito -->
@@ -150,15 +156,15 @@
     }
 </style>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
+{% with messages = get_flashed_messages(with_categories=true, category_filter=['registro_success','registro_warning']) %}
     {% if messages %}
         <script>
             window.addEventListener('DOMContentLoaded', function() {
                 {% for category, message in messages %}
-                    {% if category == 'success' %}
+                    {% if category == 'registro_success' %}
                         var modal = new bootstrap.Modal(document.getElementById('registroExitosoModal'));
                         modal.show();
-                    {% elif category == 'warning' %}
+                    {% elif category == 'registro_warning' %}
                         var modal = new bootstrap.Modal(document.getElementById('correoExistenteModal'));
                         modal.show();
                     {% endif %}
@@ -167,4 +173,5 @@
         </script>
     {% endif %}
 {% endwith %}
+{{ super() }}
 {% endblock body %}
