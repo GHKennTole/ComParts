@@ -1,23 +1,60 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+import os
 import math
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlparse, urljoin
+import pymysql
+import pymysql.cursors
 
 app = Flask(__name__)
-app.secret_key = 'appsecretkey'
+app.secret_key = os.environ.get('SECRET_KEY', 'appsecretkey')
 bcrypt = Bcrypt(app)
 
-# Configuración de la base de datos MySQL
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_PORT'] = 3306
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'ventas'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+# Configuración de la base de datos MySQL (usar variables de entorno en producción)
+def get_db_config():
+    return {
+        'host': os.environ.get('MYSQL_HOST', 'biqzxkkzarlrq5wq57be-mysql.services.clever-cloud.com'),
+        'port': int(os.environ.get('MYSQL_PORT', 3306)),
+        'user': os.environ.get('MYSQL_USER', 'u0xwmpkmnis9vgtp'),
+        'password': os.environ.get('MYSQL_PASSWORD', 'DDlVD5KdCYcAbxUJPfKF'),
+        'db': os.environ.get('MYSQL_DB', 'biqzxkkzarlrq5wq57be'),
+        'cursorclass': pymysql.cursors.DictCursor,
+        'autocommit': False
+        # Si necesitas SSL añade la clave 'ssl': {'ssl': {...}} según tu proveedor.
+    }
 
-mysql = MySQL(app)
+class ConnectionProxy:
+    """
+    Proxy ligero para mantener compatibilidad con el uso actual:
+    mysql.connection.cursor(), mysql.connection.commit(), mysql.connection.close()
+    """
+    def __init__(self, cfg):
+        self.cfg = cfg
+        self._conn = None
+
+    def _ensure_conn(self):
+        if self._conn is None:
+            self._conn = pymysql.connect(**self.cfg)
+        return self._conn
+
+    def cursor(self):
+        return self._ensure_conn().cursor()
+
+    def commit(self):
+        if self._conn:
+            self._conn.commit()
+
+    def close(self):
+        if self._conn:
+            try:
+                self._conn.close()
+            finally:
+                self._conn = None
+
+# Creamos objeto 'mysql' con interfaz compatible al código existente
+mysql = type("M", (), {})()
+mysql.connection = ConnectionProxy(get_db_config())
 
 def is_safe_url(target):
     """Verifica que la URL objetivo pertenezca al mismo host (evita open redirects)."""
@@ -61,7 +98,7 @@ def cordoba_filter(value, decimals=0, sep=' '):
         n = Decimal(str(value))
     except (InvalidOperation, TypeError, ValueError):
         return f"C$ {value}"
-    formatted = f"{n:,.{int(decimals)}f}".replace(',', sep)  
+    formatted = f"{n:,.{int(decimals)}f}".replace(',', sep)
     return f"C$ {formatted}"
 
 # ------------------- REGISTRO DE USUARIO -------------------
@@ -513,4 +550,6 @@ def dashboard():
                            data_dist=data_dist)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    port = int(os.environ.get('PORT', 8000))
+    debug = os.environ.get('FLASK_ENV', '').lower() == 'development'
+    app.run(debug=debug, host='0.0.0.0', port=port)
