@@ -173,7 +173,7 @@ Toast.fire({
                 {% if producto.fecha is string %}
                   {{ producto.fecha }}
                 {% else %}
-                  {{ producto.fecha.strftime('%Y-%m-%d') }}
+                  {{ producto.fecha.strftime('%d-%m-%Y') }}
                 {% endif %}
               {% else %}-{% endif %}
             </td>
