@@ -96,7 +96,7 @@
                 <td>{{ producto.precio | cordoba(0, ',') }}</td>
                 <td>
                   {% if producto.fecha %}
-                    {{ producto.fecha.strftime('%Y-%m-%d') if producto.fecha.strftime is not undefined else producto.fecha }}
+                    {{ producto.fecha.strftime('%d-%m-%Y') if producto.fecha.strftime is not undefined else producto.fecha }}
                   {% else %}-{% endif %}
                 </td>
                 <td>{{ producto.descripcion }}</td>
