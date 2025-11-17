@@ -1,0 +1,318 @@
+{% extends "baseadmin.html" %}
+{% block title %}Editar Productos{% endblock title %}
+{% block body %}
+
+<style>
+  :root{
+    --azul-oscuro:#113155;
+    --azul:#1d4ed8;
+    --azul-suave:#eef5ff;
+    --verde-excel:#198754;
+    --rojo-pdf:#dc3545;
+    --gris-copiado:#6c757d;
+  }
+
+  /* Fondo igual a admin/index */
+  body{
+    background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%) !important;
+  }
+
+  /* Encabezado igual al index/admin */
+  .section-bar{
+    background: linear-gradient(92deg, var(--azul-oscuro), var(--azul));
+    color:#fff;
+    border-radius:14px;
+    box-shadow:0 10px 22px rgba(17,49,85,.25);
+  }
+
+  /* Contenedor de tabla tipo card */
+  .table-card{
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 12px 24px rgba(17,49,85,.12);
+    padding:18px;
+  }
+
+  /* Estilos para los botones generados por DataTables */
+  #dtButtonsContainer { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  #dtButtonsContainer .dt-button {
+    /* eliminar estilo por defecto */
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+  /* estilo bootstrap sobre los botones (sobreescribe clases dt-button) */
+  #dtButtonsContainer .btn {
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-weight:600;
+    border-radius:8px;
+    padding:.4rem .6rem;
+    box-shadow: 0 6px 14px rgba(17,49,85,.06);
+  }
+  /* colores por acción */
+  #dtButtonsContainer .btn-copy { background: #f8f9fa; color: var(--gris-copiado); border:1px solid rgba(108,117,125,.08); }
+  #dtButtonsContainer .btn-excel { background: var(--verde-excel); color:#fff; border:1px solid rgba(25,135,84,.15); }
+  #dtButtonsContainer .btn-pdf { background: var(--rojo-pdf); color:#fff; border:1px solid rgba(220,53,69,.12); }
+  #dtButtonsContainer .btn-print { background: var(--azul); color:#fff; border:1px solid rgba(29,78,216,.12); }
+  /* versión pequeña para iconos */
+  #dtButtonsContainer .btn i { font-size:1.05rem; }
+
+  .btn.btn-success{ background-color: var(--azul); border-color: var(--azul); }
+  .btn.btn-success:hover{ background-color: var(--azul-oscuro); border-color: var(--azul-oscuro); }
+  .btn.btn-primary{ background-color: var(--azul); border-color: var(--azul); }
+  .btn.btn-primary:hover{ background-color: var(--azul-oscuro); border-color: var(--azul-oscuro); }
+  .btn.btn-outline-secondary{ color: #eef5ff; background-color: var(--azul); border-color: var(--azul); }
+  .btn.btn-outline-secondary:hover{ background-color: var(--azul-oscuro); border-color: var(--azul-oscuro); }
+  .btn.btn-light{ background-color: #dc3545; border-color: #dc3545; color: #eef5ff; }
+  .btn.btn-light:hover{ background-color: #a71d2a; border-color: #a71d2a; color: #fff; }
+
+  .modal-header.bg-success{
+    background: linear-gradient(92deg, var(--azul-oscuro), var(--azul)) !important;
+  }
+
+  /* Cabecera de tabla un poco más marcada (evita el negro de table-dark) */
+  thead th{
+    background: #f3f7ff !important;
+    color:#113155 !important;
+    border-bottom: 2px solid rgba(17,49,85,.08) !important;
+  }
+</style>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul class=flashes>
+{% for category, message in messages %}
+<script type="text/javascript">
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: "{{message}}"
+});
+</script>
+{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<div class="container py-5">
+  <!-- Encabezado -->
+  <div class="p-4 text-center section-bar mb-4">
+    <h1 class="m-0">LISTA DE PRODUCTOS</h1>
+  </div>
+
+  <!-- FILTROS / BUSCADOR arriba de la lista -->
+  <form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+      <label class="form-label mb-1">Mostrar</label>
+      <select name="per_page" class="form-select" onchange="this.form.submit()">
+        {% for opt in per_page_options %}
+        <option value="{{ opt }}" {% if per_page==opt %}selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto">
+      <label class="form-label mb-1">Ordenar</label>
+      <select name="sort" class="form-select" onchange="this.form.submit()">
+        <option value="id_asc" {% if sort=='id_asc' %}selected{% endif %}>ID (asc)</option>
+        <option value="precio_desc" {% if sort=='precio_desc' %}selected{% endif %}>Precio (mayor → menor)</option>
+        <option value="precio_asc" {% if sort=='precio_asc' %}selected{% endif %}>Precio (menor → mayor)</option>
+        <option value="nombre_asc" {% if sort=='nombre_asc' %}selected{% endif %}>Nombre A → Z</option>
+        <option value="nombre_desc" {% if sort=='nombre_desc' %}selected{% endif %}>Nombre Z → A</option>
+      </select>
+    </div>
+    <div class="col-md-5">
+      <label class="form-label mb-1">Buscar</label>
+      <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Ingrese nombre de producto" value="{{ search }}">
+        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+      </div>
+    </div>
+    <div class="col-auto align-self-end">
+      <a href="{{ url_for('editarproductos') }}" class="btn btn-light">Borrar filtros</a>
+    </div>
+  </form>
+
+  <!-- Botonera de DataTables (si usas los botones de exportación) -->
+  <div id="dtButtonsContainer" class="mb-2"></div>
+
+  <!-- Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table id="tablaProductos" class="table table-striped table-hover text-center align-middle" style="width:100%">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if productos %}
+          {% for producto in productos %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.precio | cordoba(0, ',') }}</td>
+            <td>
+              {% if producto.fecha %}
+                {% if producto.fecha is string %}
+                  {{ producto.fecha }}
+                {% else %}
+                  {{ producto.fecha.strftime('%d-%m-%Y') }}
+                {% endif %}
+              {% else %}-{% endif %}
+            </td>
+            <td>{{ producto.descripcion }}</td>
+            <td>
+              <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditar{{ producto.id }}">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <a href="{{ url_for('eliminar_producto', id=producto.id) }}"
+                 class="btn btn-danger btn-sm"
+                 data-confirm="¿Seguro que deseas eliminar este producto?"
+                 data-confirm-ok="Sí, eliminar"
+                 data-confirm-cancel="Cancelar">
+                <i class="bi bi-trash"></i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Modal de Edición -->
+          <div class="modal fade" id="modalEditar{{ producto.id }}" tabindex="-1" aria-labelledby="modalLabel{{ producto.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+              <form method="POST" action="{{ url_for('editar_producto_modal', id=producto.id) }}">
+                <div class="modal-content">
+                  <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalLabel{{ producto.id }}">Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label>Nombre</label>
+                      <input type="text" name="nombre" class="form-control" value="{{ producto.nombre }}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label>Precio</label>
+                      <input type="number" step="0.01" name="precio" class="form-control" value="{{ producto.precio }}" required>
+                    </div>
+                    <!-- agregado: campo fecha -->
+                    <div class="mb-3">
+                      <label>Fecha</label>
+                      <input type="date" name="fecha" class="form-control"
+                             value="{{ producto.fecha if producto.fecha is string else (producto.fecha.strftime('%Y-%m-%d') if producto.fecha else '') }}">
+                    </div>
+                    <div class="mb-3">
+                      <label>Descripción</label>
+                      <textarea name="descripcion" class="form-control" required>{{ producto.descripcion }}</textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <!-- aumenta el colspan por la nueva columna -->
+            <td colspan="6">No hay productos que coincidan.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Información y paginación abajo de la lista (servidora) -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <div>
+      Mostrando {{ start_item }} - {{ end_item }} de {{ total_count }} productos
+    </div>
+    <nav aria-label="Paginación">
+      <ul class="pagination mb-0">
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+          <a class="page-link" href="{{ url_for('editarproductos', page=page-1 if page>1 else 1, per_page=per_page, sort=sort, search=search) }}">Anterior</a>
+        </li>
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('editarproductos', page=p, per_page=per_page, sort=sort, search=search) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+          <a class="page-link" href="{{ url_for('editarproductos', page=page+1 if page<total_pages else total_pages, per_page=per_page, sort=sort, search=search) }}">Siguiente</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    var table = $('#tablaProductos').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        { extend: 'copyHtml5', text: '<i class="bi bi-clipboard"></i> Copiar', titleAttr: 'Copiar al portapapeles', className: 'dt-button btn btn-copy' },
+        { extend: 'excelHtml5', text: '<i class="bi bi-file-earmark-excel"></i> Excel', titleAttr: 'Exportar a Excel', className: 'dt-button btn btn-excel' },
+        { extend: 'pdfHtml5', text: '<i class="bi bi-file-earmark-pdf"></i> PDF', titleAttr: 'Descargar PDF', className: 'dt-button btn btn-pdf', orientation: 'landscape', pageSize: 'letter' },
+        { extend: 'print', text: '<i class="bi bi-printer"></i> Imprimir', titleAttr: 'Imprimir', className: 'dt-button btn btn-print' }
+      ],
+      lengthMenu: [[10, 15, 20, 25, -1], [10, 15, 20, 25, 'Todos']],
+      language: { url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+      responsive: true,
+      searching: false,
+      info: false,
+      paging: false,
+      ordering: false
+    });
+
+    // mover los botones al contenedor personalizado
+    table.buttons().container().appendTo('#dtButtonsContainer');
+
+    // añadir tooltips y clases bootstrap a los botones generados
+    var btns = document.querySelectorAll('#dtButtonsContainer button');
+    btns.forEach(function(b) {
+      // Asegurar atributos de tooltip
+      b.setAttribute('data-bs-toggle','tooltip');
+      b.setAttribute('data-bs-placement','top');
+      // Inicializar tooltip de bootstrap (si está disponible)
+      try { new bootstrap.Tooltip(b); } catch (e) { /* Ignorar si bootstrap no está cargado */ }
+
+      // Si el botón no tiene icono visible (algunas versiones crean <a>), buscar icono dentro
+      if (!b.classList.contains('btn')) {
+        b.classList.add('btn','btn-outline-secondary');
+      }
+    });
+
+    // Accessibility: añadir role y aria-label si no existen
+    btns.forEach(function(b){
+      if(!b.getAttribute('aria-label')) {
+        b.setAttribute('aria-label', b.title || b.textContent.trim());
+      }
+      b.setAttribute('type','button');
+    });
+  } catch (err) {
+    console.error('Error inicializando DataTable:', err);
+  }
+});
+</script>
+
+{% endblock %}

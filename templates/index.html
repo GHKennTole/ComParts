@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block body %}
+<style>
+  /* Paleta azul/celeste suave */
+  :root {
+    --azul-oscuro: #113155;
+    --azul: #1d4ed8;        /* Azul principal */
+    --azul-claro: #3b82f6;  /* Azul medio */
+    --celeste: #7cc2ff;     /* Acento celeste */
+    --azul-suave: #eef5ff;  /* Fondo suave */
+  }
+
+  
+
+  body {
+    background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%);
+    /* O sólido un poco más intenso: background-color:#e3efff; */
+  }
+  /* Estructura de página (sin fondo aquí) */
+  .page-index {
+    min-height: 100vh;
+  }
+  
+  /* Carousel con borde redondeado y sombra */
+  #carouselExampleIndicators {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(29, 78, 216, .18);
+    background: #000;
+  }
+  #carouselExampleIndicators .carousel-indicators [data-bs-target] {
+    width: 10px; height: 10px; border-radius: 50%;
+    background-color: rgba(255,255,255,.7);
+  }
+  #carouselExampleIndicators .carousel-indicators .active {
+    background-color: #fff;
+  }
+  #carouselExampleIndicators .carousel-control-prev-icon,
+  #carouselExampleIndicators .carousel-control-next-icon {
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.45));
+  }
+
+  /* Barras de sección (Información / Servicios) */
+  .section-bar {
+    background: linear-gradient(92deg, var(--azul-oscuro), var(--azul));
+    color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(17, 49, 85, .25);
+  }
+
+  /* Tarjetas de texto (Información) */
+  .info-card {
+    border: 1px solid rgba(59,130,246,.18);
+    box-shadow: 0 10px 22px rgba(29,78,216,.08);
+    border-radius: 14px;
+    background: #fff;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 28px rgba(29,78,216,.14);
+  }
+
+  /* Tarjetas de servicios */
+  .srv-card {
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(17, 49, 85, .12);
+    transition: transform .15s ease, box-shadow .15s ease;
+    background: #fff;
+  }
+  .srv-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px rgba(17, 49, 85, .16);
+  }
+  .srv-card img {
+    background: var(--azul-suave);
+  }
+
+  /* Botón primario en azul (fallback por si Bootstrap no carga) */
+  .btn.btn-primary {
+    background-color: var(--azul);
+    border-color: var(--azul);
+  }
+  .btn.btn-primary:hover {
+    background-color: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+  }
+  
+</style>
+
+<div class="d-flex flex-column page-index">
+
+  <!-- Carousel -->
+  <div class="container my-4">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+          aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+          aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+          aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active" data-bs-interval="5000">
+          <img src="{{ url_for('static', filename='banner1.png') }}" class="d-block w-100" alt="Banner 1">
+        </div>
+        <div class="carousel-item" data-bs-interval="5000">
+          <img src="{{ url_for('static', filename='banner2.png') }}" class="d-block w-100" alt="Banner 2">
+        </div>
+        <div class="carousel-item" data-bs-interval="5000">
+          <img src="{{ url_for('static', filename='banner3.png') }}" class="d-block w-100" alt="Banner 3">
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Información -->
+  <div class="container my-4">
+    <div class="p-4 text-center section-bar">
+      <h1 class="m-0">INFORMACIÓN</h1>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="info-card p-3">
+          <p class="text-wrap" style="text-align: justify;"> ComParts es una página dedicada a la venta de partes y componentes para computadoras de escritorio y laptops. Ofrecemos una amplia variedad de piezas de calidad, desde procesadores, memorias RAM y tarjetas gráficas, hasta discos duros, fuentes de poder y accesorios, pensados para quienes buscan mejorar el rendimiento de su equipo o realizar una reparación específica.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="info-card p-3">
+          <p class="text-wrap" style="text-align: justify;"> Además de componentes individuales, en ComParts también encontrarás computadoras completas, tanto de escritorio como laptops, listas para usar. Contamos con equipos armados a medida, diseñados para ajustarse a diferentes necesidades, ya sea para el trabajo, el estudio o el gaming. Nuestro objetivo es ofrecer soluciones confiables y accesibles que se adapten al presupuesto y a las exigencias de cada cliente.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="info-card p-3">
+          <p class="text-wrap" style="text-align: justify;"> Por último, en ComParts brindamos servicios de reparación y mantenimiento para computadoras. Nuestro equipo técnico especializado se encarga de diagnosticar problemas, reemplazar piezas defectuosas, optimizar el rendimiento y dar soporte preventivo para que tus equipos funcionen de manera eficiente y duradera. De esta forma, no solo ofrecemos productos, sino también el respaldo técnico que garantiza tranquilidad a nuestros clientes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Servicios -->
+  <div class="container my-4">
+    <div class="p-3 text-center section-bar">
+      <h1 class="m-0">SERVICIOS</h1>
+    </div>
+  </div>
+
+  <div class="container mt-3 pb-5">
+    <div class="row g-4">
+      <!-- Servicio 1 -->
+      <div class="col-sm-4">
+        <div class="card srv-card h-100">
+          <img src="{{ url_for('static', filename='componentes.png') }}" class="card-img-top rounded-circle p-3" alt="Componentes">
+          <div class="card-body">
+            <h5 class="card-title">Venta de Componentes</h5>
+            <p class="text-wrap" style="text-align: justify;"> En ComParts ofrecemos una amplia gama de componentes para computadoras, incluyendo procesadores, tarjetas gráficas, memorias RAM y más. Todos nuestros productos son de alta calidad y están disponibles a precios competitivos.</p>
+          </div>
+          <div class="text-center mb-3">
+            <button class="btn btn-primary">Ver más...</button>
+          </div>
+        </div>
+      </div>
+      <!-- Servicio 2 -->
+      <div class="col-sm-4">
+        <div class="card srv-card h-100">
+          <img src="{{ url_for('static', filename='computadoras.png') }}" class="card-img-top rounded-circle p-3" alt="Computadoras">
+          <div class="card-body">
+            <h5 class="card-title">Computadoras</h5>
+            <p class="text-wrap" style="text-align: justify;"> En ComParts ofrecemos una variedad de computadoras escritorio o laptop de alto rendimiento, ideales para juegos, diseño gráfico y uso empresarial. Trabajamos con las mejores marcas y garantizamos la calidad de nuestros productos.</p>
+          </div>
+          <div class="text-center mb-3">
+            <button class="btn btn-primary">Ver más...</button>
+          </div>
+        </div>
+      </div>
+      <!-- Servicio 3 -->
+      <div class="col-sm-4">
+        <div class="card srv-card h-100">
+          <img src="{{ url_for('static', filename='reparacion.png') }}" class="card-img-top rounded-circle p-3" alt="Reparación">
+          <div class="card-body">
+            <h5 class="card-title">Reparación y Mantenimiento</h5>
+            <p class="text-wrap" style="text-align: justify;"> En ComParts ofrecemos servicios de reparación y mantenimiento para todo tipo de computadoras y dispositivos electrónicos. Nuestro equipo de técnicos especializados está listo para solucionar cualquier problema que puedas tener.</p>
+          </div>
+          <div class="text-center mb-3">
+            <button class="btn btn-primary">Ver más...</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

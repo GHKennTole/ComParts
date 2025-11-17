@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Acerca de ComParts{% endblock titulo %}
+
+{% block body %}
+
+<style>
+    :root {
+      --azul-oscuro: #113155;
+      --azul: #1d4ed8;
+      --azul-claro: #3b82f6;
+      --celeste: #7cc2ff;
+      --azul-suave: #eef5ff;
+    }
+    body {
+      background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%);
+    }
+
+    .page-index {
+        min-height: 100vh;
+      }
+
+      .btn.btn-primary {
+        background-color: var(--azul);
+        border-color: var(--azul);
+      }
+      .btn.btn-primary:hover {
+        background-color: var(--azul-oscuro);
+        border-color: var(--azul-oscuro);
+      }
+      
+  </style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo ComParts" width="80" class="mb-3">
+                        <h2 class="fw-bold text-primary">¡Bienvenido a ComParts!</h2>
+                    </div>
+                    <p class="fs-5">
+                        En <span class="fw-bold text-primary">ComParts</span> nos apasiona la tecnología y trabajamos para acercarla a cada uno de nuestros clientes. Somos una tienda especializada en la venta de partes y componentes para computadoras de escritorio y laptops, además de equipos completos listos para usar.
+                    </p>
+                    <p class="fs-5">
+                        Nuestro catálogo incluye desde piezas esenciales hasta accesorios de última generación, siempre con la garantía de calidad y buen servicio.
+                    </p>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item">Armado de computadoras personalizadas</li>
+                        <li class="list-group-item">Venta de equipos completos</li>
+                        <li class="list-group-item">Reparación y mantenimiento</li>
+                        <li class="list-group-item">Atención personalizada</li>
+                    </ul>
+                    <p class="fs-5">
+                        Nuestro equipo técnico se dedica a diagnosticar, reparar y optimizar computadoras, asegurando un funcionamiento estable y prolongando la vida útil de cada dispositivo.
+                    </p>
+                    <div class="text-center mt-4">
+                        <span class="badge bg-primary fs-6">¡Confianza, calidad y soluciones prácticas!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

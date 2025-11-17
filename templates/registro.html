@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block titulo %} Registrarse {% endblock titulo %}
+
+{% block body %}
+<style>
+  :root {
+    --azul-oscuro: #113155;
+    --azul: #1d4ed8;
+  }
+  /* Fondo como el index */
+  body { background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%); }
+  /* Asegura azul en primarios (override del morado global) */
+  .btn.btn-primary { background-color: var(--azul) !important; border-color: var(--azul) !important; }
+  .btn.btn-primary:hover { background-color: var(--azul-oscuro) !important; border-color: var(--azul-oscuro) !important; }
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: transparent;">
+  <div class="p-4 w-100" style="max-width: 1100px;">
+    <div class="rounded-5 overflow-hidden p-0 shadow-lg" style="background-color: #f7fbff;">
+      <div class="row g-0">
+
+        <!-- Columna izquierda (Logo y bienvenida) -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-white p-5"
+             style="background: linear-gradient(92deg,#113155,#1d4ed8);">
+          <img src="{{ url_for('static', filename='logo.png') }}" class="img-fluid mb-4"
+               style="max-width: 40%; height: auto; object-fit: contain;">
+          <h2 class="text-center">¡Bienvenido!</h2>
+          <p class="text-center mb-4" style="font-family: 'Lucida Console', monospace;">
+            Ingresa tu información para registrarte
+          </p>
+          <a href="{{ url_for('login') }}">
+            <button type="button" class="btn btn-outline-light">Iniciar Sesión</button>
+          </a>
+        </div>
+
+        <!-- Columna derecha (Formulario) -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center p-5"
+             style="background-color:#f7fbff; height: 100%;">
+          <h2 class="mb-4">Crear cuenta</h2>
+
+          <!-- Botón Google -->
+          <button type="button"
+                  class="btn btn-light w-100 d-flex align-items-center justify-content-center mb-3"
+                  style="max-width: 400px; height: 45px;">
+            <img src="{{ url_for('static', filename='logoGoogle.png') }}" alt="Google Logo"
+                 style="width: 20px; margin-right: 10px;">
+            Iniciar con Google
+          </button>
+
+          <p class="text-center mb-3">o usa tu email para registrarte</p>
+
+          <!-- Formulario -->
+          <form method="post" action="{{ url_for('crearusuario') }}" class="w-100" style="max-width: 400px;">
+            <div class="mb-3">
+              <input type="text" class="form-control" name="nombre" placeholder="Nombre completo" required>
+            </div>
+            <div class="mb-3">
+              <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
+            </div>
+            <div class="mb-3">
+              <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
+            </div>
+            <div class="mb-3">
+              <input type="password" class="form-control" name="confirm_password" placeholder="Confirmar contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" style="height: 45px;">Registrarse</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de éxito -->
+<div class="modal fade" id="registroExitosoModal" tabindex="-1" aria-labelledby="registroExitosoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #d5eadc">
+            <div class="modal-header border-0 justify-content-center">
+                <h5 class="modal-title w-100 text-center" id="registroExitosoLabel"
+                    style="color: #218838; font-weight: bold; font-size: 2rem; letter-spacing: 1px;">
+                    <i class="bi bi-check-circle-fill me-2"
+                       style="color: #43b581; font-size: 2.5rem; vertical-align: middle;"></i>
+                    ¡Registro Exitoso!
+                </h5>
+            </div>
+            <div class="modal-body text-center"
+                 style="color: #155724; font-size: 1.3rem; font-family: 'Segoe UI', 'Arial', sans-serif; font-weight: 500;">
+                ¡Usuario registrado exitosamente!
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-center">
+                <button type="button" class="btn btn-outline-success px-4 py-2 fw-bold btn-login-shadow"
+                        data-bs-dismiss="modal" style="border-radius: 20px">
+                    Aceptar
+                </button>
+                <a href="{{ url_for('login') }}" class="btn btn-blue px-4 py-2 fw-bold ms-2 btn-login-shadow"
+                   style="background-color: #3498db; border-radius: 20px; border: none; color: #fff;">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de correo ya registrado -->
+<div class="modal fade" id="correoExistenteModal" tabindex="-1" aria-labelledby="correoExistenteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #ffe5e0">
+            <div class="modal-header border-0 justify-content-center">
+                <h5 class="modal-title w-100 text-center" id="correoExistenteLabel"
+                    style="color: #d35400; font-weight: bold; font-size: 2rem; letter-spacing: 1px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"
+                       style="color: #e74c3c; font-size: 2.5rem; vertical-align: middle;"></i>
+                    ¡Correo ya registrado!
+                </h5>
+            </div>
+            <div class="modal-body text-center"
+                 style="color: #d35400; font-size: 1.3rem; font-family: 'Segoe UI', 'Arial', sans-serif; font-weight: 500;">
+                El correo ingresado ya está registrado. Debe usar otro correo o iniciar
+                sesión con éste.
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-center">
+                <button type="button" class="btn btn-outline-danger px-4 py-2 fw-bold btn-login-shadow"
+                        data-bs-dismiss="modal" style="border-radius: 20px">
+                    Aceptar
+                </button>
+                <a href="{{ url_for('login') }}" class="btn btn-blue px-4 py-2 fw-bold ms-2 btn-login-shadow"
+                   style="background-color: #3498db; border-radius: 20px; border: none; color: #fff;">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-login-shadow:hover,
+    .btn-login-shadow:focus {
+        box-shadow: 0 0 12px 2px #43b581;
+        background-color: #36a06d !important;
+        color: #fff !important;
+        transition: box-shadow 0.2s, background-color 0.2s;
+    }
+    .btn-blue {
+        background-color: #3498db !important;
+        color: #fff !important;
+        border: none !important;
+    }
+    .btn-blue:hover,
+    .btn-blue:focus {
+        box-shadow: 0 0 12px 2px #3498db;
+        background-color: #217dbb !important;
+        color: #fff !important;
+        transition: box-shadow 0.2s, background-color 0.2s;
+    }
+</style>
+
+{% with messages = get_flashed_messages(with_categories=true, category_filter=['registro_success','registro_warning']) %}
+    {% if messages %}
+        <script>
+            window.addEventListener('DOMContentLoaded', function() {
+                {% for category, message in messages %}
+                    {% if category == 'registro_success' %}
+                        var modal = new bootstrap.Modal(document.getElementById('registroExitosoModal'));
+                        modal.show();
+                    {% elif category == 'registro_warning' %}
+                        var modal = new bootstrap.Modal(document.getElementById('correoExistenteModal'));
+                        modal.show();
+                    {% endif %}
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+{% endwith %}
+{{ super() }}
+{% endblock body %}

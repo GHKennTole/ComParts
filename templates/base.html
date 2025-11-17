@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+  <title>{% block titulo %}{% endblock titulo %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    crossorigin="anonymous"
+  />
+  <!-- Font Awesome (para iconos del footer) -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    rel="stylesheet"
+    crossorigin="anonymous"
+  />
+  <!-- SweetAlert2 (para notificaciones) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    :root{
+      --cp-primary: #502c92;      /* Morado principal */
+      --cp-primary-2: #8d5bd3;    /* Morado medio */
+      --cp-primary-3: #4b2c89;    /* Morado oscuro */
+      --cp-accent:   #a06cd5;     /* Acento */
+    }
+    body{ background-color:#f6f5fb; }
+
+    /* Navbar morada con degradado */
+    .navbar-morado{
+      background: linear-gradient(92deg, var(--cp-primary-3), var(--cp-primary), var(--cp-primary-2));
+    }
+    .navbar .navbar-brand{
+      font-weight: 700;
+      letter-spacing:.3px;
+    }
+    .navbar .nav-link{
+      color:#eae4ff;
+      opacity:.9;
+    }
+    .navbar .nav-link:hover,
+    .navbar .nav-link.active{
+      color:#ffffff;
+      opacity:1;
+      position: relative;
+    }
+    .navbar .nav-link.active::after{
+      content:"";
+      position:absolute;
+      left:8px; right:8px; bottom:0;
+      height:2px; border-radius:2px;
+      background:#ffffff;
+    }
+    .btn-primary{
+      background-color: var(--cp-primary);
+      border-color: var(--cp-primary);
+    }
+    .btn-primary:hover{
+      background-color: var(--cp-primary-3);
+      border-color: var(--cp-primary-3);
+    }
+
+    /* Footer morado oscuro */
+    footer.footer-morado{
+      background: linear-gradient(180deg, #1e1238, var(--cp-primary-3));
+      color:#e9e6ff;
+    }
+    footer .footer-text{ margin-bottom:.25rem; opacity:.9; }
+    footer h5{ color:#fff; font-weight:700; margin-bottom:.75rem; }
+    footer a, footer i{ color:#e9e6ff; text-decoration:none; }
+    footer a:hover{ color:#ffffff; text-decoration:underline; }
+    hr.footer-divider{ border-color:#6e5a9f; opacity:.3; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-morado" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('inicio') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+        <span>ComParts</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link{% if request.endpoint == 'inicio' %} active{% endif %}" href="{{ url_for('inicio') }}">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if request.endpoint == 'contacto' %} active{% endif %}" href="{{ url_for('contacto') }}">Contactanos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if request.endpoint == 'about' %} active{% endif %}" href="{{ url_for('about') }}">Acerca de</a>
+          </li>
+        </ul>
+        <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <main class="container mt-4">
+    {% block body %}{% endblock body %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-morado mt-5 w-100">
+    <div class="container text-white py-5">
+      <div class="row g-4">
+        <div class="col-sm-3">
+          <h5>COMPARTS</h5>
+          <p class="footer-text mb-1">Juigalpa, Chontales</p>
+          <p class="footer-text mb-0">Nicaragua</p>
+        </div>
+        <div class="col-sm-3">
+          <h5>Marcas</h5>
+          <p class="footer-text mb-1">Intel</p>
+          <p class="footer-text mb-1">AMD</p>
+          <p class="footer-text mb-0">Apple</p>
+        </div>
+        <div class="col-sm-3">
+          <h5>Links</h5>
+          <p class="footer-text mb-0"><a href="#" aria-label="Términos y condiciones">Terms & Conditions</a></p>
+        </div>
+        <div class="col-sm-3">
+          <h5>Contactos</h5>
+          <p class="footer-text mb-1"><i class="fab fa-facebook me-2"></i>Facebook</p>
+          <p class="footer-text mb-0"><i class="fab fa-instagram me-2"></i>Instagram</p>
+        </div>
+      </div>
+      <hr class="footer-divider">
+      <p class="text-center mb-0">Copyright © 2025 - Jeril Toledo</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

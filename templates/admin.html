@@ -1,0 +1,183 @@
+{% extends 'baseadmin.html' %}
+{% block title %}Panel de Administración{% endblock %}
+{% block body %}
+
+<style>
+  /* Paleta (coherente con index) */
+  :root {
+    --azul-oscuro: #113155;
+    --azul: #1d4ed8;
+    --azul-suave: #eef5ff;
+    --rojo: #dc3545;
+    --rojo-oscuro: #a71d2a;
+  }
+
+  /* Fondo igual a index */
+  body {
+    background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%) !important;
+  }
+
+  /* Encabezado como index */
+  .section-bar {
+    background: linear-gradient(92deg, var(--azul-oscuro), var(--azul));
+    color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(17, 49, 85, .25);
+  }
+
+  /* Tarjetas admin */
+  .admin-card {
+    border: 0;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 12px 24px rgba(17, 49, 85, .12);
+    transition: transform .15s ease, box-shadow .15s ease;
+    height: 100%;
+  }
+  .admin-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px rgba(17, 49, 85, .16);
+  }
+  .admin-icon {
+    width: 92px; height: 92px;
+    object-fit: contain;
+    background: var(--azul-suave);
+    border-radius: 25%;
+    padding: 14px;
+    margin: 16px auto 0;
+    display: block;
+  }
+
+  /* Botón primario en azul */
+  .btn.btn-primary {
+    background-color: var(--azul);
+    border-color: var(--azul);
+  }
+  .btn.btn-primary:hover {
+    background-color: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+  }
+</style>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul class=flashes>
+{% for category, message in messages if category != 'logout_success' %}
+<script type="text/javascript">
+const Toast = Swal.mixin({
+  toast: true, position: "top-end", showConfirmButton: false,
+  timer: 2000, timerProgressBar: true,
+  didOpen: (t) => { t.onmouseenter = Swal.stopTimer; t.onmouseleave = Swal.resumeTimer; }
+});
+const iconMap = { success: 'success', login_success: 'success', danger: 'error', warning: 'warning', info: 'info' };
+Toast.fire({ icon: iconMap["{{category}}"] || 'info', title: "{{message}}" });
+</script>
+{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<div class="container p-5 mt-3">
+  <div class="p-4 text-center section-bar mb-4">
+    <h1 class="m-0">SISTEMA DE GESTIÓN DE PRODUCTOS</h1>
+  </div>
+
+  <div class="row text-center g-4">
+
+    <!-- Perfil del Usuario -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card admin-card">
+        <img src="{{ url_for('static', filename='user.png') }}"
+             class="admin-icon"
+             alt="Perfil del Usuario"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Gestiona tu perfil y credenciales">
+        <div class="card-body">
+          <h5 class="card-title">Perfil del Usuario</h5>
+          <a href="{{ url_for('perfil_admin') }}" class="btn btn-primary"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Ir al perfil del administrador">Ver Detalles</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card admin-card">
+        <img src="{{ url_for('static', filename='dashboard.png') }}"
+             class="admin-icon"
+             alt="Dashboard"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Analíticas, métricas y estado del sistema">
+        <div class="card-body">
+          <h5 class="card-title">Dashboard</h5>
+          <a href="{{ url_for('dashboard') }}" class="btn btn-primary"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Abrir el panel de control">Ver Detalles</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registrar Productos -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card admin-card">
+        <img src="{{ url_for('static', filename='agregarp.png') }}"
+             class="admin-icon"
+             alt="Registrar Productos"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Agrega nuevos productos al catálogo">
+        <div class="card-body">
+          <h5 class="card-title">Registrar Productos</h5>
+          <a href="{{ url_for('listar_productos_agregados') }}" class="btn btn-primary"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Ir al registro de productos">Ver Detalles</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visualizar Productos -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card admin-card">
+        <img src="{{ url_for('static', filename='listarp.png') }}"
+             class="admin-icon"
+             alt="Visualizar Productos"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Consulta, filtra y revisa el inventario">
+        <div class="card-body">
+          <h5 class="card-title">Visualizar Productos</h5>
+          <a href="{{ url_for('listar_productos') }}" class="btn btn-primary"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Ver listado de productos">Ver Detalles</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Usuarios (nuevo card) -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card admin-card">
+        <img src="{{ url_for('static', filename='listausuarios.png') }}"
+             class="admin-icon"
+             alt="Lista de Usuarios"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Consulta y administra todos los usuarios">
+        <div class="card-body">
+          <h5 class="card-title">Lista de Usuarios</h5>
+          <a href="{{ url_for('listar') }}" class="btn btn-primary"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             title="Ir al listado de usuarios">Ver Detalles</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const triggers = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    triggers.forEach(el => {
+      try { new bootstrap.Tooltip(el); } catch (e) { /* Ignorar si bootstrap no está cargado */ }
+    });
+  });
+</script>
+{% endblock %}

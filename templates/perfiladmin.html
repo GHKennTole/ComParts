@@ -1,0 +1,240 @@
+{% extends 'baseadmin.html' %}
+
+{% block title %}Perfil del Administrador{% endblock %}
+
+{% block body %}
+<style>
+  :root {
+    --azul-oscuro: #113155;
+    --azul: #1d4ed8;
+    --azul-suave: #eef5ff;
+  }
+  body {
+    background: linear-gradient(180deg, #cfe3ff 0%, #cfe3ff 65%, #cfe3ff 100%) !important;
+  }
+  .section-bar {
+    background: linear-gradient(92deg, var(--azul-oscuro), var(--azul));
+    color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(17, 49, 85, .25);
+  }
+
+  /* Tarjetas generales */
+  .profile-card, .info-card {
+    border: 0;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 12px 24px rgba(17, 49, 85, .12);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .profile-card:hover, .info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px rgba(17, 49, 85, .16);
+  }
+
+  /* Evita que la tarjeta izquierda estire en altura */
+  .profile-card.no-stretch {
+    height: auto !important;
+    align-self: flex-start;
+  }
+
+  /* Mejoras visuales para el lado izquierdo (perfil) */
+  .profile-card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .profile-header {
+    background: linear-gradient(90deg, #113155, #1d4ed8);
+    color: #fff;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.12);
+    box-shadow: 0 8px 20px rgba(17,49,85,0.18);
+    background: #f5f7fb;
+  }
+  .profile-header h5 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: .2px; }
+  .profile-header .muted { opacity: .9; font-size: .86rem; }
+
+  .profile-body { padding: 18px; display:flex; flex-direction:column; gap:12px; }
+  .profile-stats { display:flex; gap:12px; justify-content:space-around; align-items:center; }
+  .stat { text-align:center; min-width:88px; }
+  .stat .value {
+    font-weight:700;
+    font-size:1.2rem;
+    color:#113155;
+    background:linear-gradient(180deg,#eef6ff,#ffffff);
+    border:1px solid rgba(17,49,85,0.04);
+    padding:8px 12px;
+    border-radius:8px;
+    display:inline-block;
+    box-shadow: 0 6px 14px rgba(17,49,85,0.06);
+  }
+  .stat .label { display:block; margin-top:6px; font-size:.85rem; color:#6b7a8f; }
+
+  .profile-actions { display:flex; gap:8px; justify-content:center; margin-top:6px; }
+  .btn-outline-primary { border-radius:8px; padding:6px 12px; }
+  .btn-light { border-radius:8px; padding:6px 12px; }
+
+  /* estilos originales para la columna de información (derecha) */
+  .info-card { height: 100%; }
+  .list-group-flush .list-group-item {
+    border: 0; border-bottom: 1px solid rgba(17,49,85,.08); padding: 12px 0; background: transparent;
+  }
+  .list-group-flush .list-group-item:last-child { border-bottom: 0; }
+
+  @media (max-width: 767px) {
+    .profile-header { padding: 14px; }
+    .avatar { width:80px; height:80px; }
+    .stat .value { font-size:1rem; padding:6px 10px; }
+  }
+</style>
+
+<div class="container py-5">
+  <div class="p-4 text-center section-bar mb-4">
+    <h1 class="m-0">PERFIL DEL ADMINISTRADOR</h1>
+  </div>
+
+  <!-- align-items-start evita que las columnas se estiren a la misma altura -->
+  <div class="row g-4 align-items-start">
+    <!-- Lado izquierdo (perfil) -->
+    <div class="col-lg-4">
+      <div class="profile-card no-stretch">
+        <div class="profile-header">
+          <img src="{{ url_for('static', filename='perfil/perfil.png') }}" alt="Foto de perfil del administrador" class="avatar" loading="lazy"
+               data-bs-toggle="tooltip" title="Foto de perfil">
+          <div class="flex-grow-1">
+            <h5 class="mb-0" data-bs-toggle="tooltip" title="Nombre completo">{{ usuario.nombre }}</h5>
+            <div class="muted" data-bs-toggle="tooltip" title="Correo registrado">{{ usuario.email }}</div>
+            <div class="mt-2"><span class="badge bg-primary" data-bs-toggle="tooltip" title="Rol asignado">Administrador</span></div>
+          </div>
+        </div>
+
+        <div class="profile-body">
+          <div class="profile-stats">
+            <div class="stat">
+              <div class="value" data-bs-toggle="tooltip" title="Número de productos agregados por este administrador">{{ product_count|default(0) }}</div>
+              <div class="label">Productos agregados</div>
+            </div>
+            <div class="stat">
+              <div class="value" data-bs-toggle="tooltip" title="Cantidad de inicios de sesión registrados">{{ login_count|default(0) }}</div>
+              <div class="label">Inicios de sesión</div>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarPerfil" title="Editar tu perfil">
+              <i class="bi bi-pencil me-1"></i> Editar perfil
+            </button>
+            <a href="{{ url_for('listausuarios') }}" class="btn btn-light" title="Ver y administrar usuarios">
+              <i class="bi bi-people me-1"></i> Usuarios
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lado derecho (información) -->
+    <div class="col-lg-8">
+      <div class="info-card p-4 h-100">
+        <h5 class="fw-bold mb-3">
+          <i class="bi bi-person-badge-fill text-primary me-2" title="Información del perfil"></i>Información del perfil
+        </h5>
+        <ul class="list-group list-group-flush fs-6">
+          <li class="list-group-item" title="Nombre completo del administrador">
+            <i class="bi bi-person-fill text-primary me-2"></i>
+            <strong>Nombre:</strong> {{ usuario.nombre }}
+          </li>
+          <li class="list-group-item" title="Correo electrónico asociado a la cuenta">
+            <i class="bi bi-envelope-fill text-primary me-2"></i>
+            <strong>Correo:</strong> {{ usuario.email }}
+          </li>
+          <li class="list-group-item" title="Rol de acceso del usuario">
+            <i class="bi bi-shield-lock-fill text-primary me-2"></i>
+            <strong>Rol:</strong> <span class="badge bg-danger">Administrador</span>
+          </li>
+          <li class="list-group-item" title="Identificador único en el sistema">
+            <i class="bi bi-hash text-primary me-2"></i>
+            <strong>ID de Usuario:</strong> {{ usuario.id }}
+          </li>
+          <li class="list-group-item" title="Estado actual de la cuenta">
+            <i class="bi bi-toggle-on text-primary me-2"></i>
+            <strong>Estado:</strong> <span class="badge bg-success">Activo</span>
+          </li>
+          <li class="list-group-item" title="Nivel de permisos asignado">
+            <i class="bi bi-gear-fill text-primary me-2"></i>
+            <strong>Permisos:</strong> Control total del sistema
+          </li>
+          {% if usuario.last_login %}
+          <li class="list-group-item" title="Fecha y hora del último inicio de sesión">
+            <i class="bi bi-clock-history text-primary me-2"></i>
+            <strong>Último inicio:</strong>
+            {% set ll = usuario.last_login %}
+            {{ ll.strftime('%d/%m/%Y %H:%M') if ll is not string else ll }}
+          </li>
+          {% endif %}
+          {% if usuario.created_at %}
+          <li class="list-group-item" title="Fecha de creación del perfil">
+            <i class="bi bi-calendar2-plus text-primary me-2"></i>
+            <strong>Perfil creado:</strong>
+            {% set cr = usuario.created_at %}
+            {{ cr.strftime('%d/%m/%Y %H:%M') if cr is not string else cr }}
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Perfil -->
+<div class="modal fade" id="modalEditarPerfil" tabindex="-1" aria-hidden="true" aria-labelledby="tituloEditarPerfil">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('editar_perfil') }}">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="tituloEditarPerfil">Editar perfil</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" value="{{ usuario.nombre }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" name="email" class="form-control" value="{{ usuario.email }}" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Nueva contraseña (opcional)</label>
+            <input type="password" name="password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" title="Guardar cambios en tu perfil">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cerrar sin guardar">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Inicializar tooltips (si Bootstrap JS está cargado en baseadmin)
+  var els = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"], [title]'));
+  els.forEach(function (el) {
+    try { new bootstrap.Tooltip(el); } catch(e) { /* ignorar si no está bootstrap */ }
+  });
+});
+</script>
+{% endblock %}

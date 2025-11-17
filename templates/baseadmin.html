@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <title>{% block title %}{% endblock title %}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.23.0/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.23.0/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link href="{{ url_for('static', filename='DataTables/datatables.min.css') }}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet">
+
+    <style>
+      :root{
+        --cp-primary:   #5a32b6;   /* morado principal */
+        --cp-primary-2: #6b41c9;   /* morado medio */
+        --cp-primary-3: #2e1a5e;   /* morado profundo */
+        --cp-text-light:#ede9f7;
+        --azul-oscuro: #113155;
+        --azul: #1d4ed8;
+        --azul-suave: #eef5ff;
+        --rojo: #dc3545;
+        --rojo-oscuro: #a71d2a;
+      }
+
+      /* Fondo general sutil en morado (sobrio) */
+      body {
+        background: linear-gradient(180deg, #f4f1fb 0%, #efeaf9 70%, #ece7f7 100%) !important;
+      }
+
+      /* Navbar morada */
+      .navbar-morado{
+        background: linear-gradient(92deg, var(--cp-primary-3), var(--cp-primary), var(--cp-primary-2));
+      }
+      .navbar-morado .navbar-brand{
+        color:#fff;
+        font-weight:700;
+        letter-spacing:.2px;
+      }
+      .navbar-morado .nav-link{
+        color: #e9e4ff;
+        opacity:.92;
+      }
+      .navbar-morado .nav-link:hover,
+      .navbar-morado .nav-link.active{
+        color:#fff;
+        opacity:1;
+        position:relative;
+      }
+      .navbar-morado .nav-link.active::after{
+        content:"";
+        position:absolute;
+        left:8px; right:8px; bottom:0;
+        height:2px; border-radius:2px;
+        background:#ffffff;
+      }
+      .navbar-morado .dropdown-menu{
+        border-radius:10px;
+        border:1px solid rgba(106,65,201,.25);
+        box-shadow:0 10px 22px rgba(46,26,94,.25);
+      }
+      .navbar-morado .dropdown-item:active{
+        background-color: var(--cp-primary);
+      }
+
+      /* Botón salir en navbar (manteniendo clase, solo re-estilo) */
+      .navbar-morado .btn.btn-outline-success {
+        color: #fff !important;
+        border-color: var(--rojo);
+        background: var(--rojo);
+        transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+      }
+      .navbar-morado .btn.btn-outline-success:hover,
+      .navbar-morado .btn.btn-outline-success:focus {
+        color: #fff !important;
+        background: var(--rojo-oscuro) !important;
+        border-color: var(--rojo-oscuro) !important;
+        box-shadow: 0 8px 20px rgba(220,53,69,.12);
+      }
+
+      /* Footer morado oscuro */
+      footer.footer-morado{
+        background: linear-gradient(180deg, #1b1134, var(--cp-primary-3));
+        color:#e9e6ff;
+      }
+      footer.footer-morado p{ margin:0; padding:.75rem 0; }
+    </style>
+</head>
+
+<body>
+<header>
+  <!-- Navbar (solo cambio visual de clase) -->
+  <nav class="navbar navbar-expand-lg navbar-morado" data-bs-theme="dark">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('admin') }}">
+              <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+              ComParts
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav justify-content-center flex-grow-1">
+                  <li class="nav-item">
+                      <a class="nav-link{% if request.endpoint == 'admin' %} active{% endif %}" aria-current="page" href="{{ url_for('admin') }}">Inicio</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link{% if request.endpoint == 'dashboard' %} active{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a>
+                </li>
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Productos
+                      </a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('listar_productos_agregados') }}">Agregar</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('listar_productos') }}">Listar</a></li>
+                      </ul>
+                  </li>
+
+                  {# Nuevo dropdown "Principal" con Perfil y Usuarios #}
+                  {% set principal_active = request.endpoint in ['perfil_admin', 'listar'] %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if principal_active %} active{% endif %}"
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Principal
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('perfil_admin') }}">Perfil</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('listar') }}">Usuarios</a></li>
+                    </ul>
+                  </li>
+
+              </ul>
+              <div class="d-flex align-items-center ms-auto gap-3">
+                {% if session.get('nombre') %}
+                <span class="navbar-text text-light ms-2">
+                  Bienvenid@, {{ session['nombre'] }}
+                </span>
+                {% endif %}
+                <a class="btn btn-outline-success" href="{{ url_for('logout') }}">SALIR</a>
+              </div>
+          </div>
+      </div>
+  </nav>
+</header>
+
+<main>
+{% block body %}
+{% endblock %}
+</main>
+
+<footer class="footer-morado mt-4">
+    <div class="container">
+        <p class="text-center">Copyright © 2025 - Jeril Toledo</p>
+    </div>
+</footer>
+
+<!-- Librerías JS (orden: jQuery -> DataTables -> Buttons y dependencias -> Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+<script src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const logoutBtn = document.querySelector('a[href="{{ url_for("logout") }}"]');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: '¿Está seguro que desea cerrar el sistema?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = logoutBtn.href;
+                }
+            });
+        });
+    }
+});
+
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('[data-confirm]');
+    if (!btn) return;
+
+    e.preventDefault();
+
+    const title = btn.getAttribute('data-confirm') || '¿Desea continuar?';
+    const text = btn.getAttribute('data-confirm-text') || '';
+    const confirmText = btn.getAttribute('data-confirm-ok') || 'Sí';
+    const cancelText = btn.getAttribute('data-confirm-cancel') || 'Cancelar';
+
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: confirmText,
+        cancelButtonText: cancelText
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (btn.tagName.toLowerCase() === 'a' && btn.href) {
+                window.location.href = btn.href;
+                return;
+            }
+            const form = btn.closest('form');
+            if (form) {
+                form.submit();
+                return;
+            }
+            const url = btn.getAttribute('data-url');
+            if (url) {
+                window.location.href = url;
+                return;
+            }
+            if (btn.type === 'submit' && form) {
+                form.submit();
+            }
+        }
+    });
+});
+</script>
+</body>
+</html>
